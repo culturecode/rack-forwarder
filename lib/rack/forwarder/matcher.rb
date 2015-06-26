@@ -10,7 +10,7 @@ module Rack
           return URI.join(to, path).to_s unless to =~ /\$\d+/
 
           regexp.match(path).captures.to_enum
-            .with_index(1).each_with_object(to) do |(match, index), url|
+            .with_index(1).each_with_object(to.dup) do |(match, index), url|
               url.gsub!("$#{index}", match)
             end
         end
