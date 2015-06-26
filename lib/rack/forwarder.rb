@@ -25,7 +25,8 @@ module Rack
 
     def call(env)
       request = Request.new(env)
-      matcher = @matchers.match?(request.path)
+      url_without_base = request.url.gsub(request.base_url, "")
+      matcher = @matchers.match?(url_without_base)
       return @app.call(env) unless matcher
 
       request_method = request.request_method.to_s.downcase
@@ -34,7 +35,7 @@ module Rack
       }.merge(@options)
       response = Excon.public_send(
         request_method,
-        matcher.url_from(request.path),
+        matcher.url_from(url_without_base),
         options,
       )
 
